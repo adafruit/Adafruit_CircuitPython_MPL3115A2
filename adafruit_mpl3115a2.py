@@ -112,8 +112,13 @@ class MPL3115A2:
         # Validate the chip ID.
         if self._read_u8(_MPL3115A2_WHOAMI) != 0xC4:
             raise RuntimeError('Failed to find MPL3115A2, check your wiring!')
-        # Reset.
-        self._write_u8(_MPL3115A2_CTRL_REG1, _MPL3115A2_CTRL_REG1_RST)
+        # Reset.  Note the chip immediately resets and won't send an I2C back
+        # so we need to catch the OSError and swallow it (otherwise this fails
+        # expecting an ACK that never comes).
+        try:
+            self._write_u8(_MPL3115A2_CTRL_REG1, _MPL3115A2_CTRL_REG1_RST)
+        except OSError:
+            pass
         time.sleep(0.01)
         # Poll for the reset to finish.
         self._poll_reg1(_MPL3115A2_CTRL_REG1_RST)
@@ -168,9 +173,9 @@ class MPL3115A2:
         # First poll for a measurement to be finished.
         self._poll_reg1(_MPL3115A2_CTRL_REG1_OST)
         # Set control bits for pressure reading.
-        self._ctrl_reg1 &= ~0b00000001  # Turn off bit 0, ALT.
+        self._ctrl_reg1 &= ~0b10000000  # Turn off bit 7, ALT.
         self._write_u8(_MPL3115A2_CTRL_REG1, self._ctrl_reg1)
-        self._ctrl_reg1 |= 0b00000100   # Set OST to 1
+        self._ctrl_reg1 |= 0b00000010   # Set OST to 1 to start measurement.
         self._write_u8(_MPL3115A2_CTRL_REG1, self._ctrl_reg1)
         # Poll status for PDR to be set.
         while self._read_u8(_MPL3115A2_REGISTER_STATUS) & _MPL3115A2_REGISTER_STATUS_PDR == 0:
@@ -195,9 +200,9 @@ class MPL3115A2:
         # First poll for a measurement to be finished.
         self._poll_reg1(_MPL3115A2_CTRL_REG1_OST)
         # Set control bits for pressure reading.
-        self._ctrl_reg1 |= 0b00000001  # Turn on bit 0, ALT.
+        self._ctrl_reg1 |= 0b10000000  # Turn on bit 0, ALT.
         self._write_u8(_MPL3115A2_CTRL_REG1, self._ctrl_reg1)
-        self._ctrl_reg1 |= 0b00000100   # Set OST to 1
+        self._ctrl_reg1 |= 0b00000010   # Set OST to 1 to start measurement.
         self._write_u8(_MPL3115A2_CTRL_REG1, self._ctrl_reg1)
         # Poll status for PDR to be set.
         while self._read_u8(_MPL3115A2_REGISTER_STATUS) & _MPL3115A2_REGISTER_STATUS_PDR == 0:
