@@ -31,7 +31,10 @@ See examples/simpletest.py for a demo of the usage.
 import time
 
 from micropython import const
-import ustruct
+try:
+    import ustruct as struct
+except ImportError:
+    import struct
 
 import adafruit_bus_device.i2c_device as i2c_device
 
@@ -214,7 +217,7 @@ class MPL3115A2:
         # Reconstruct signed 32-bit altitude value (actually 24 bits shifted up
         # and then scaled down).
         self._BUFFER[3] = 0  # Top 3 bytes of buffer were read from the chip.
-        altitude = ustruct.unpack('>i', self._BUFFER[0:4])[0]
+        altitude = struct.unpack('>i', self._BUFFER[0:4])[0]
         # Scale down to meters.
         return altitude / 65535.0
 
@@ -228,7 +231,7 @@ class MPL3115A2:
         # Read 2 bytes of data from temp register.
         self._read_into(_MPL3115A2_REGISTER_TEMP_MSB, self._BUFFER, count=2)
         # Reconstruct signed 12-bit value.
-        temperature = ustruct.unpack('>h', self._BUFFER[0:2])[0]
+        temperature = struct.unpack('>h', self._BUFFER[0:2])[0]
         temperature >>= 4
         # Scale down to degrees Celsius.
         return temperature / 16.0
