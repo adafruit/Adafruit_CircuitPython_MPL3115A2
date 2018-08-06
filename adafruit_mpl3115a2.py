@@ -35,7 +35,7 @@ try:
     import ustruct as struct
 except ImportError:
     import struct
-# pylint: disable=useless-import-alias
+
 import adafruit_bus_device.i2c_device as i2c_device
 
 
