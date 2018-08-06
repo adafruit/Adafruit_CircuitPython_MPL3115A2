@@ -35,8 +35,8 @@ try:
     import ustruct as struct
 except ImportError:
     import struct
-
-import adafruit_bus_device.i2c_device as i2c_dev
+# pylint: disable=useless-import-alias
+import adafruit_bus_device.i2c_device as i2c_device
 
 
 __version__ = "0.0.0-auto.0"
@@ -111,7 +111,7 @@ class MPL3115A2:
     _BUFFER = bytearray(4)
 
     def __init__(self, i2c, *, address=_MPL3115A2_ADDRESS):
-        self._device = i2c_dev.I2CDevice(i2c, address)
+        self._device = i2c_device.I2CDevice(i2c, address)
         # Validate the chip ID.
         if self._read_u8(_MPL3115A2_WHOAMI) != 0xC4:
             raise RuntimeError('Failed to find MPL3115A2, check your wiring!')
