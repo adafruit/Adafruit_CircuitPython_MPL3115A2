@@ -9,8 +9,8 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
-.. image:: https://travis-ci.org/adafruit/Adafruit_CircuitPython_MPL3115A2.svg?branch=master
-    :target: https://travis-ci.org/adafruit/Adafruit_CircuitPython_MPL3115A2
+.. image:: https://travis-ci.com/adafruit/Adafruit_CircuitPython_MPL3115A2.svg?branch=master
+    :target: https://travis-ci.com/adafruit/Adafruit_CircuitPython_MPL3115A2
     :alt: Build Status
 
 CircuitPython module for the MPL3115A2 barometric pressure & temperature sensor.
