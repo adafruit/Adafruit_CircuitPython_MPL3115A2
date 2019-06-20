@@ -139,9 +139,7 @@ class MPL3115A2:
         if count is None:
             count = len(buf)
         with self._device as i2c:
-            buf[0] = address & 0xFF
-            i2c.write(buf, end=1, stop=False)
-            i2c.readinto(buf, end=count)
+            i2c.write_then_readinto(bytes([address & 0xFF]), buf, in_end=count, stop=False)
 
     def _read_u8(self, address):
         # Read an 8-bit unsigned value from the specified 8-bit address.
