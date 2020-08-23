@@ -44,7 +44,6 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MPL3115A2.git"
 
 
-# pylint: disable=bad-whitespace
 # Internal constants:
 _MPL3115A2_ADDRESS = const(0x60)
 _MPL3115A2_REGISTER_STATUS = const(0x00)
@@ -95,7 +94,6 @@ _MPL3115A2_CTRL_REG1_OS64 = const(0x30)
 _MPL3115A2_CTRL_REG1_OS128 = const(0x38)
 
 _MPL3115A2_REGISTER_STARTCONVERSION = const(0x12)
-# pylint: enable=bad-whitespace
 
 
 class MPL3115A2:
