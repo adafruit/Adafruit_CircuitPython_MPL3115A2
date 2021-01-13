@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
+# SPDX-License-Identifier: MIT
+
 # Simple demo of the MPL3115A2 sensor.
 # Will read the pressure and temperature and print them out every second.
 # Author: Tony DiCola
