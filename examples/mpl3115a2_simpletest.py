@@ -3,7 +3,6 @@
 
 # Simple demo of the MPL3115A2 sensor.
 # Will read the pressure and temperature and print them out every second.
-# Author:
 import time
 
 import board
