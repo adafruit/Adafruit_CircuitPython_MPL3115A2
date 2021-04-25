@@ -23,8 +23,12 @@ Table of Contents
 .. toctree::
     :caption: Tutorials
 
+    MPL3115A2 - I2C Barometric Pressure/Altitude/Temperature Sensor Learning Guide <https://learn.adafruit.com/using-mpl3115a2-with-circuitpython>
+
 .. toctree::
     :caption: Related Products
+
+    MPL3115A2 - I2C Barometric Pressure/Altitude/Temperature Sensor <https://www.adafruit.com/product/1893>
 
 .. toctree::
     :caption: Other Links
