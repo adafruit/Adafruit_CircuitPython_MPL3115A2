@@ -4,15 +4,12 @@
 # Simple demo of the MPL3115A2 sensor.
 # Will read the pressure and temperature and print them out every second.
 import time
-
 import board
-import busio
-
 import adafruit_mpl3115a2
 
 
-# Initialize the I2C bus.
-i2c = busio.I2C(board.SCL, board.SDA)
+# Create sensor object, communicating over the board's default I2C bus
+i2c = board.I2C()  # uses board.SCL and board.SDA
 
 # Initialize the MPL3115A2.
 sensor = adafruit_mpl3115a2.MPL3115A2(i2c)
@@ -20,7 +17,7 @@ sensor = adafruit_mpl3115a2.MPL3115A2(i2c)
 # sensor = adafruit_mpl3115a2.MPL3115A2(i2c, address=0x10)
 
 # You can configure the pressure at sealevel to get better altitude estimates.
-# This value has to be looked up from your local weather forecast or meteorlogical
+# This value has to be looked up from your local weather forecast or meteorological
 # reports.  It will change day by day and even hour by hour with weather
 # changes.  Remember altitude estimation from barometric pressure is not exact!
 # Set this to a value in pascals:

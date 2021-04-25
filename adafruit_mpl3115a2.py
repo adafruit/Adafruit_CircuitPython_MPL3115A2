@@ -7,9 +7,24 @@
 ====================================================
 
 CircuitPython module for the MPL3115A2 barometric pressure & temperature sensor.
-See examples/simpletest.py for a demo of the usage.
 
 * Author(s): Tony DiCola
+
+Implementation Notes
+--------------------
+
+**Hardware:**
+
+* `Adafruit MPL3115A2 - I2C Barometric Pressure/Altitude/Temperature Sensor
+  <https://www.adafruit.com/product/1893>`_
+
+**Software and Dependencies:**
+
+* Adafruit CircuitPython firmware for the supported boards:
+  https://circuitpython.org/downloads
+
+* Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
+
 """
 import time
 
@@ -80,12 +95,37 @@ _MPL3115A2_REGISTER_STARTCONVERSION = const(0x12)
 
 
 class MPL3115A2:
-    """Instance of the MPL3115A2 sensor.  Must specify the following parameters
-    when creating an instance of this device:
-    - i2c: The I2C bus connected to the sensor.
+    """Instance of the MPL3115A2 sensor.
 
-    In addition you can specify the following optional keyword arguments:
-    - address: The I2C address of the device if it's different from the default.
+    :param ~busio.I2C i2c: The I2C bus the MPL3115A2 is connected to.
+    :param int address: The I2C device address. Defaults to :const:`0x60`
+
+    **Quickstart: Importing and using the MPL3115A2**
+
+        Here is an example of using the :class:`MPL3115A2` class.
+        First you will need to import the libraries to use the sensor
+
+        .. code-block:: python
+
+            import board
+            import adafruit_mpl3115a2
+
+        Once this is done you can define your `board.I2C` object and define your sensor object
+
+        .. code-block:: python
+
+            i2c = board.I2C()   # uses board.SCL and board.SDA
+            sensor = adafruit_mpl3115a2.MPL3115A2(i2c)
+
+        Now you have access to the :attr:`temperature`, :attr:`pressure`
+        and :attr:`altitude` attributes
+
+        .. code-block:: python
+
+            temperature = sensor.temperature
+            pressure = sensor.pressure
+            altitude = sensor.altitude
+
     """
 
     # Class level buffer to reduce memory usage and allocations.
@@ -184,7 +224,7 @@ class MPL3115A2:
         """Read the altitude as calculated based on the sensor pressure and
         previously configured pressure at sea-level.  This will return a
         value in meters.  Set the sea-level pressure by updating the
-        sealevel_pressure property first to get a more accurate altitude value.
+        :attr:`sealevel_pressure` property first to get a more accurate altitude value.
         """
         # First poll for a measurement to be finished.
         self._poll_reg1(_MPL3115A2_CTRL_REG1_OST)
@@ -230,7 +270,7 @@ class MPL3115A2:
     @property
     def sealevel_pressure(self):
         """Read and write the pressure at sea-level used to calculate altitude.
-        You must look this up from a local weather or meteorlogical report for
+        You must look this up from a local weather or meteorological report for
         the best accuracy.  This is a value in Pascals.
         """
         # Read the sea level pressure in bars.
