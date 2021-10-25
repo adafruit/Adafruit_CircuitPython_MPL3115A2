@@ -56,6 +56,11 @@ Usage Example
 
 See examples/simpletest.py for a demo of the usage.
 
+Documentation
+=============
+
+API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/mpl3115a2/en/latest/>`_.
+
 Contributing
 ============
 
