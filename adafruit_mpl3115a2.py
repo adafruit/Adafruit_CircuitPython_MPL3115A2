@@ -141,7 +141,11 @@ class MPL3115A2:
             pass
         time.sleep(0.01)
         # Poll for the reset to finish.
-        self._poll_reg1(_MPL3115A2_CTRL_REG1_RST)
+        # try/except is a hack for RP2040
+        try:
+            self._poll_reg1(_MPL3115A2_CTRL_REG1_RST)
+        except OSError:
+            self._poll_reg1(_MPL3115A2_CTRL_REG1_RST)
         # Configure the chip registers with default values.
         self._ctrl_reg1 = _MPL3115A2_CTRL_REG1_OS128 | _MPL3115A2_CTRL_REG1_ALT
         self._write_u8(_MPL3115A2_CTRL_REG1, self._ctrl_reg1)
@@ -198,7 +202,7 @@ class MPL3115A2:
         self._write_u8(_MPL3115A2_CTRL_REG1, self._ctrl_reg1)
         self._ctrl_reg1 |= 0b00000010  # Set OST to 1 to start measurement.
         self._write_u8(_MPL3115A2_CTRL_REG1, self._ctrl_reg1)
-        # Poll status for PDR to be set.
+        # Poll status for PDR to be set = press conversion complete
         while (
             self._read_u8(_MPL3115A2_REGISTER_STATUS) & _MPL3115A2_REGISTER_STATUS_PDR
             == 0
@@ -211,8 +215,8 @@ class MPL3115A2:
             (self._BUFFER[0] << 16) | (self._BUFFER[1] << 8) | self._BUFFER[2]
         ) & 0xFFFFFF
         pressure >>= 4
-        # Scale down to pascals.
-        return pressure / 4.0
+        # Scale down to hectopascals.
+        return pressure / 400.0
 
     @property
     def altitude(self):
@@ -248,7 +252,12 @@ class MPL3115A2:
     @property
     def temperature(self):
         """Read the temperature as measured by the sensor in degrees Celsius."""
-        # Poll status for TDR to be set.
+        # First poll for a measurement to be finished.
+        self._poll_reg1(_MPL3115A2_CTRL_REG1_OST)
+        # Initatiate a one-shot measurement
+        self._ctrl_reg1 |= 0b00000010  # Set OST to 1 to start measurement.
+        self._write_u8(_MPL3115A2_CTRL_REG1, self._ctrl_reg1)
+        # Poll status for TDR to be set = temp conv complete
         while (
             self._read_u8(_MPL3115A2_REGISTER_STATUS) & _MPL3115A2_REGISTER_STATUS_TDR
             == 0
