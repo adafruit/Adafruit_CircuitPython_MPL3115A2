@@ -144,7 +144,7 @@ class MPL3115A2:
         # try/except is a hack for RP2040
         try:
             self._poll_reg1(_MPL3115A2_CTRL_REG1_RST)
-        except:
+        except OSError:
             self._poll_reg1(_MPL3115A2_CTRL_REG1_RST)
         # Configure the chip registers with default values.
         self._ctrl_reg1 = _MPL3115A2_CTRL_REG1_OS128 | _MPL3115A2_CTRL_REG1_ALT
