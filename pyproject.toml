@@ -12,7 +12,7 @@ requires = [
 [project]
 name = "adafruit-circuitpython-mpl3115a2"
 description = "CircuitPython library for MPL3115A2 barometric pressure and temperature sensor."
-version = "0.0.0-auto.0"
+version = "0.0.0+auto.0"
 readme = "README.rst"
 authors = [
     {name = "Adafruit Industries", email = "circuitpython@adafruit.com"}
