@@ -125,7 +125,10 @@ class MPL3115A2:
 
     # Class level buffer to reduce memory usage and allocations.
     # Note this is not thread safe by design!
-    _BUFFER = bytearray(4)
+    _BUFFER = bytearray(5)
+    # _BUFFER size was previously 4. It was increased as the current configuration
+    # creates a flag in _MPL3115A2_REGISTER_STATUS that we were not clearing depending
+    # on the properties reading order
 
     def __init__(self, i2c, *, address=_MPL3115A2_ADDRESS):
         self._device = i2c_device.I2CDevice(i2c, address)
@@ -209,7 +212,7 @@ class MPL3115A2:
         ):
             time.sleep(0.01)
         # Read 3 bytes of pressure data into buffer.
-        self._read_into(_MPL3115A2_REGISTER_PRESSURE_MSB, self._BUFFER, count=3)
+        self._read_into(_MPL3115A2_REGISTER_PRESSURE_MSB, self._BUFFER)
         # Reconstruct 20-bit pressure value.
         pressure = (
             (self._BUFFER[0] << 16) | (self._BUFFER[1] << 8) | self._BUFFER[2]
@@ -241,7 +244,7 @@ class MPL3115A2:
         # Read 3 bytes of altitude data into buffer.
         # Yes even though this is the address of the pressure register it
         # returns altitude when the ALT bit is set above.
-        self._read_into(_MPL3115A2_REGISTER_PRESSURE_MSB, self._BUFFER, count=3)
+        self._read_into(_MPL3115A2_REGISTER_PRESSURE_MSB, self._BUFFER)
         # Reconstruct signed 32-bit altitude value (actually 24 bits shifted up
         # and then scaled down).
         self._BUFFER[3] = 0  # Top 3 bytes of buffer were read from the chip.
@@ -264,9 +267,9 @@ class MPL3115A2:
         ):
             time.sleep(0.01)
         # Read 2 bytes of data from temp register.
-        self._read_into(_MPL3115A2_REGISTER_TEMP_MSB, self._BUFFER, count=2)
+        self._read_into(_MPL3115A2_REGISTER_PRESSURE_MSB, self._BUFFER)
         # Reconstruct signed 12-bit value.
-        temperature = struct.unpack(">h", self._BUFFER[0:2])[0]
+        temperature = struct.unpack(">h", self._BUFFER[3:5])[0]
         temperature >>= 4
         # Scale down to degrees Celsius.
         return temperature / 16.0
