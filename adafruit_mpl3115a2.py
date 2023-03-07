@@ -197,7 +197,7 @@ class MPL3115A2:
 
     @property
     def pressure(self):
-        """Read the barometric pressure detected by the sensor in Pascals."""
+        """Read the barometric pressure detected by the sensor in Hectopascals."""
         # First poll for a measurement to be finished.
         self._poll_reg1(_MPL3115A2_CTRL_REG1_OST)
         # Set control bits for pressure reading.
@@ -254,7 +254,7 @@ class MPL3115A2:
 
     @property
     def temperature(self):
-        """Read the temperature as measured by the sensor in degrees Celsius."""
+        """Read the temperature as measured by the sensor in Celsius."""
         # First poll for a measurement to be finished.
         self._poll_reg1(_MPL3115A2_CTRL_REG1_OST)
         # Initatiate a one-shot measurement
@@ -278,13 +278,13 @@ class MPL3115A2:
     def sealevel_pressure(self):
         """Read and write the pressure at sea-level used to calculate altitude.
         You must look this up from a local weather or meteorological report for
-        the best accuracy.  This is a value in Pascals.
+        the best accuracy.  This is a value in Hectopascals.
         """
         # Read the sea level pressure in bars.
         self._read_into(_MPL3115A2_BAR_IN_MSB, self._BUFFER, count=2)
-        # Reconstruct 16-bit value and scale back to pascals.
+        # Reconstruct 16-bit value and scale back to Hectopascals.
         pressure = (self._BUFFER[0] << 8) | self._BUFFER[1]
-        return pressure * 2.0
+        return pressure * 2.0 / 100
 
     @sealevel_pressure.setter
     def sealevel_pressure(self, val):
