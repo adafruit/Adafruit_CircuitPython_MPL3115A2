@@ -288,6 +288,6 @@ class MPL3115A2:
 
     @sealevel_pressure.setter
     def sealevel_pressure(self, val):
-        # Convert to bars of pressure and write to the sealevel register.
-        bars = val // 2
+        # Convert from hectopascals to bars of pressure and write to the sealevel register.
+        bars = int(val * 50)
         self._write_u16_be(_MPL3115A2_BAR_IN_MSB, bars)
