@@ -8,7 +8,7 @@
 
 CircuitPython module for the MPL3115A2 barometric pressure & temperature sensor.
 
-* Author(s): Tony DiCola
+* Author(s): Tony DiCola, Jose D. Montoya
 
 Implementation Notes
 --------------------
