@@ -33,6 +33,13 @@ from micropython import const
 from adafruit_bus_device import i2c_device
 
 
+try:
+    import typing  # pylint: disable=unused-import
+    from busio import I2C
+    from circuitpython_typing import WriteableBuffer
+except ImportError:
+    pass
+
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_MPL3115A2.git"
 
@@ -130,7 +137,7 @@ class MPL3115A2:
     # creates a flag in _MPL3115A2_REGISTER_STATUS that we were not clearing depending
     # on the properties reading order
 
-    def __init__(self, i2c, *, address=_MPL3115A2_ADDRESS):
+    def __init__(self, i2c: I2C, *, address: int = _MPL3115A2_ADDRESS):
         self._device = i2c_device.I2CDevice(i2c, address)
         # Validate the chip ID.
         if self._read_u8(_MPL3115A2_WHOAMI) != 0xC4:
@@ -159,7 +166,7 @@ class MPL3115A2:
             | _MPL3115A2_PT_DATA_CFG_DREM,
         )
 
-    def _read_into(self, address, buf, count=None):
+    def _read_into(self, address: int, buf: WriteableBuffer, count: int = None) -> None:
         # Read bytes from the specified 8-bit address into the provided buffer.
         # If the count is not specified then the entire buffer is filled,
         # otherwise count bytes are copied in.
@@ -168,19 +175,19 @@ class MPL3115A2:
         with self._device as i2c:
             i2c.write_then_readinto(bytes([address & 0xFF]), buf, in_end=count)
 
-    def _read_u8(self, address):
+    def _read_u8(self, address: int) -> int:
         # Read an 8-bit unsigned value from the specified 8-bit address.
         self._read_into(address, self._BUFFER, count=1)
         return self._BUFFER[0]
 
-    def _write_u8(self, address, val):
+    def _write_u8(self, address: int, val: int) -> None:
         # Write an 8-bit unsigned value to the specified 8-bit address.
         with self._device as i2c:
             self._BUFFER[0] = address & 0xFF
             self._BUFFER[1] = val & 0xFF
             i2c.write(self._BUFFER, end=2)
 
-    def _write_u16_be(self, address, val):
+    def _write_u16_be(self, address: int, val: int) -> None:
         # Write a 16-bit big endian unsigned value to the specified 8-bit
         # address.
         with self._device as i2c:
@@ -189,14 +196,14 @@ class MPL3115A2:
             self._BUFFER[2] = val & 0xFF
             i2c.write(self._BUFFER, end=3)
 
-    def _poll_reg1(self, mask):
+    def _poll_reg1(self, mask: int) -> None:
         # Poll the CTRL REG1 value for the specified masked bits to NOT be
         # present.
         while self._read_u8(_MPL3115A2_CTRL_REG1) & mask > 0:
             time.sleep(0.01)
 
     @property
-    def pressure(self):
+    def pressure(self) -> float:
         """Read the barometric pressure detected by the sensor in Hectopascals."""
         # First poll for a measurement to be finished.
         self._poll_reg1(_MPL3115A2_CTRL_REG1_OST)
@@ -222,7 +229,7 @@ class MPL3115A2:
         return pressure / 400.0
 
     @property
-    def altitude(self):
+    def altitude(self) -> float:
         """Read the altitude as calculated based on the sensor pressure and
         previously configured pressure at sea-level.  This will return a
         value in meters.  Set the sea-level pressure by updating the
@@ -253,7 +260,7 @@ class MPL3115A2:
         return altitude / 65535.0
 
     @property
-    def temperature(self):
+    def temperature(self) -> float:
         """Read the temperature as measured by the sensor in Celsius."""
         # First poll for a measurement to be finished.
         self._poll_reg1(_MPL3115A2_CTRL_REG1_OST)
@@ -275,7 +282,7 @@ class MPL3115A2:
         return temperature / 16.0
 
     @property
-    def sealevel_pressure(self):
+    def sealevel_pressure(self) -> float:
         """Read and write the pressure at sea-level used to calculate altitude.
         You must look this up from a local weather or meteorological report for
         the best accuracy.  This is a value in Hectopascals.
@@ -287,7 +294,7 @@ class MPL3115A2:
         return pressure * 2.0 / 100
 
     @sealevel_pressure.setter
-    def sealevel_pressure(self, val):
+    def sealevel_pressure(self, val: float) -> None:
         # Convert from hectopascals to bars of pressure and write to the sealevel register.
         bars = int(val * 50)
         self._write_u16_be(_MPL3115A2_BAR_IN_MSB, bars)
