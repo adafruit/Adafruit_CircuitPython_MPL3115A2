@@ -4,9 +4,10 @@
 # Simple demo of the MPL3115A2 sensor.
 # Will read the pressure and temperature and print them out every second.
 import time
-import board
-import adafruit_mpl3115a2
 
+import board
+
+import adafruit_mpl3115a2
 
 # Create sensor object, communicating over the board's default I2C bus
 i2c = board.I2C()  # uses board.SCL and board.SDA
@@ -27,9 +28,9 @@ sensor.sealevel_pressure = 1022.5
 # Main loop to read the sensor values and print them every second.
 while True:
     pressure = sensor.pressure
-    print("Pressure: {0:0.3f} hectopascals".format(pressure))
+    print(f"Pressure: {pressure:0.3f} hectopascals")
     altitude = sensor.altitude
-    print("Altitude: {0:0.3f} meters".format(altitude))
+    print(f"Altitude: {altitude:0.3f} meters")
     temperature = sensor.temperature
-    print("Temperature: {0:0.3f} Celsius".format(temperature))
+    print(f"Temperature: {temperature:0.3f} Celsius")
     time.sleep(1.0)
