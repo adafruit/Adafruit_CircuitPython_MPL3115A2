@@ -26,15 +26,16 @@ Implementation Notes
 * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 
 """
+
 import struct
 import time
 
-from micropython import const
 from adafruit_bus_device import i2c_device
-
+from micropython import const
 
 try:
-    import typing  # pylint: disable=unused-import
+    import typing
+
     from busio import I2C
     from circuitpython_typing import WriteableBuffer
 except ImportError:
@@ -213,17 +214,12 @@ class MPL3115A2:
         self._ctrl_reg1 |= 0b00000010  # Set OST to 1 to start measurement.
         self._write_u8(_MPL3115A2_CTRL_REG1, self._ctrl_reg1)
         # Poll status for PDR to be set = press conversion complete
-        while (
-            self._read_u8(_MPL3115A2_REGISTER_STATUS) & _MPL3115A2_REGISTER_STATUS_PDR
-            == 0
-        ):
+        while self._read_u8(_MPL3115A2_REGISTER_STATUS) & _MPL3115A2_REGISTER_STATUS_PDR == 0:
             time.sleep(0.01)
         # Read 3 bytes of pressure data into buffer.
         self._read_into(_MPL3115A2_REGISTER_PRESSURE_MSB, self._BUFFER)
         # Reconstruct 20-bit pressure value.
-        pressure = (
-            (self._BUFFER[0] << 16) | (self._BUFFER[1] << 8) | self._BUFFER[2]
-        ) & 0xFFFFFF
+        pressure = ((self._BUFFER[0] << 16) | (self._BUFFER[1] << 8) | self._BUFFER[2]) & 0xFFFFFF
         pressure >>= 4
         # Scale down to hectopascals.
         return pressure / 400.0
@@ -243,10 +239,7 @@ class MPL3115A2:
         self._ctrl_reg1 |= 0b00000010  # Set OST to 1 to start measurement.
         self._write_u8(_MPL3115A2_CTRL_REG1, self._ctrl_reg1)
         # Poll status for PDR to be set.
-        while (
-            self._read_u8(_MPL3115A2_REGISTER_STATUS) & _MPL3115A2_REGISTER_STATUS_PDR
-            == 0
-        ):
+        while self._read_u8(_MPL3115A2_REGISTER_STATUS) & _MPL3115A2_REGISTER_STATUS_PDR == 0:
             time.sleep(0.01)
         # Read 3 bytes of altitude data into buffer.
         # Yes even though this is the address of the pressure register it
@@ -268,10 +261,7 @@ class MPL3115A2:
         self._ctrl_reg1 |= 0b00000010  # Set OST to 1 to start measurement.
         self._write_u8(_MPL3115A2_CTRL_REG1, self._ctrl_reg1)
         # Poll status for TDR to be set = temp conv complete
-        while (
-            self._read_u8(_MPL3115A2_REGISTER_STATUS) & _MPL3115A2_REGISTER_STATUS_TDR
-            == 0
-        ):
+        while self._read_u8(_MPL3115A2_REGISTER_STATUS) & _MPL3115A2_REGISTER_STATUS_TDR == 0:
             time.sleep(0.01)
         # Read 2 bytes of data from temp register.
         self._read_into(_MPL3115A2_REGISTER_PRESSURE_MSB, self._BUFFER)
